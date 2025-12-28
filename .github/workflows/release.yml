@@ -6,18 +6,14 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      # version:
-      #   description: Version to be increased
-      #   required: true
-      #   type: choice
-      #   options:
-      #     - patch
-      #     - minor
-      #     - major
       version:
-        description: Version to be published
+        description: Version to be increased
         required: true
-        type: string
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 defaults:
   run:
