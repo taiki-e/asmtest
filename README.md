@@ -10,6 +10,8 @@
 
 A library for tracking generated assemblies.
 
+See [atomic-maybe-uninit#55](https://github.com/taiki-e/atomic-maybe-uninit/pull/55) for an usage example.
+
 <!-- tidy:sync-markdown-to-rustdoc:end -->
 
 ## License
