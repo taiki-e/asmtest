@@ -12,6 +12,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Remove the requirement for the `id` command.
+
+- Documentation improvements.
+
 ## [0.1.0] - 2025-12-28
 
 Initial release
