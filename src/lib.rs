@@ -9,6 +9,16 @@ A library for tracking generated assemblies.
 
 See [atomic-maybe-uninit#55](https://github.com/taiki-e/atomic-maybe-uninit/pull/55) for an usage example.
 
+## Compatibility
+
+All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, LoongArch, Arm64EC, s390x, MIPS, PowerPC, MSP430, AVR, SPARC, Hexagon, M68k, C-SKY, and Xtensa) have been confirmed to work as targets for generating assembly. Pull requests adding support for non-CPU architectures (such as GPU, WASM, BPF, etc.) are welcome.
+
+x86_64 and AArch64 environments where all of the following commands are available are currently supported as host environments:
+
+- `cargo`
+- `docker`
+- `id`
+
 <!-- tidy:sync-markdown-to-rustdoc:end -->
 */
 
