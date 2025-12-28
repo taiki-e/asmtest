@@ -20,7 +20,6 @@ x86_64 and AArch64 environments where all of the following commands are availabl
 
 - `cargo`
 - `docker`
-- `id`
 
 <!-- tidy:sync-markdown-to-rustdoc:end -->
 

@@ -17,7 +17,6 @@ x86_64 and AArch64 environments where all of the following commands are availabl
 
 - `cargo`
 - `docker`
-- `id`
 
 <!-- tidy:sync-markdown-to-rustdoc:end -->
 */
@@ -260,9 +259,12 @@ impl<'a> TesterContext<'a> {
         let rustc_version = config.rustc_version().unwrap();
 
         // For docker
-        let mut user = cmd!("id", "-u").read().unwrap();
-        user.push(':');
-        user.push_str(&cmd!("id", "-g").read().unwrap());
+        #[cfg(not(windows))]
+        let user = {
+            format!("{}:{}", rustix::process::getuid().as_raw(), rustix::process::getgid().as_raw())
+        };
+        #[cfg(windows)]
+        let user = "1000:1000".to_owned();
 
         Self { tester, manifest_path, config, nightly: rustc_version.nightly, metadata, user }
     }

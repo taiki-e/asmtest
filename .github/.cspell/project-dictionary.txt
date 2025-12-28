@@ -1,6 +1,8 @@
 affineinvqb
 asmtest
 demangled
+getgid
+getuid
 insn
 movi
 rmeta
