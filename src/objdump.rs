@@ -9,7 +9,7 @@ use std::{borrow::Cow, cmp, collections::HashMap, sync::LazyLock};
 use anyhow::Context as _;
 use regex::Regex;
 
-use crate::RevisionContext;
+use crate::{ArchFamily, RevisionContext};
 
 pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
     match cx.target_arch {
@@ -75,7 +75,13 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                 }
             }
         }
-        if cx.target_arch == "xtensa" {
+        if cx.arch_family == ArchFamily::PowerPC {
+            if let Some(name) = function_name.strip_prefix(".text.") {
+                // .text is not demangled by objdump 2.45.
+                function_name = Cow::Owned(format!(".text.{:#}", rustc_demangle::demangle(name)));
+            }
+        }
+        if cx.arch_family == ArchFamily::Xtensa {
             // TODO: .literal handling in Xtensa is not yet good:
             //
             //   .literal.asm_test::compare_exchange_weak::u16::seqcst_acquire:
@@ -105,30 +111,30 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                     Cow::Owned(format!(".literal.{:#}", rustc_demangle::demangle(name)));
             }
         }
-        let (label_re, addr_pos) = match cx.target_arch {
-            "arm" if !cx.prefer_gnu => (
+        let (label_re, addr_pos) = match cx.arch_family {
+            ArchFamily::Arm if !cx.prefer_gnu => (
                 format!(
                     "(-)?(0x)?[0-9a-f]+ <{verbose_function_name}(\\+0x([0-9a-f]+))?>( @ imm = #(-)?0x[0-9a-f]+)?"
                 ),
                 4,
             ),
-            "avr" => (
+            ArchFamily::Avr => (
                 "\\.(\\+|-)[0-9]+ +\t; 0x([0-9a-f]+) <__zero_reg__(\\+0x[0-9a-f]+)?>".to_owned(),
                 2,
             ),
-            "csky" => (
+            ArchFamily::CSky => (
                 format!(
                     "0x[0-9a-f]+\t// (0x)?[0-9a-f]+ <{verbose_function_name}(\\+0x([0-9a-f]+))?>"
                 ),
                 3,
             ),
-            "loongarch32" | "loongarch64" if cx.prefer_gnu => (
+            ArchFamily::LoongArch if cx.prefer_gnu => (
                 format!(
                     "(-)?(0x)?[0-9a-f]+\t# (-)?(0x)?[0-9a-f]+ <{verbose_function_name}(\\+0x([0-9a-f]+))?>"
                 ),
                 6,
             ),
-            "msp430" => ("\\$(\\+|-)[0-9]+ +\t;abs 0x([0-9a-f]+)".to_owned(), 2),
+            ArchFamily::Msp430 => ("\\$(\\+|-)[0-9]+ +\t;abs 0x([0-9a-f]+)".to_owned(), 2),
             _ => (format!("(-)?(0x)?[0-9a-f]+ <{verbose_function_name}(\\+0x([0-9a-f]+))?>"), 4),
         };
         let label_re = Regex::new(&label_re).unwrap();
@@ -160,7 +166,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                         label_count += 1;
                     }
                     let (_raw_insn, mut s) = s.trim_ascii_start().split_once('\t').unwrap(); // TODO: unwrap
-                    if cx.is_hexagon {
+                    if cx.arch_family == ArchFamily::Hexagon {
                         //    8:<\t>e4 5f 00 78<\t>78005fe4   <\t>r4 = #0xff
                         //    8:<\t>e4 5f 00 78<\t>78005fe4 { <\t>r4 = #0xff
                         //                     ^^^^-- trim_ascii_start
@@ -234,7 +240,7 @@ fn write_func(cx: &mut RevisionContext<'_>, function_name: &str, lines: &[Line<'
         }
         match *line {
             Line::Inst { addr: _, name: inst, ref operands } => {
-                if cx.is_x86_base && inst == "lock" {
+                if cx.arch_family == ArchFamily::X86 && inst == "lock" {
                     if operands.is_empty() {
                         if let Some(Line::Inst { addr: _, name: inst, operands }) =
                             instructions.next()
@@ -256,7 +262,7 @@ fn write_func(cx: &mut RevisionContext<'_>, function_name: &str, lines: &[Line<'
                 }
                 if operands.is_empty() {
                     let _ = writeln!(cx.out, "{START_PAD}{inst}");
-                } else if cx.is_hexagon {
+                } else if cx.arch_family == ArchFamily::Hexagon {
                     if inst.is_empty() {
                         let _ = writeln!(cx.out, "{START_PAD}  {operands}");
                     } else {

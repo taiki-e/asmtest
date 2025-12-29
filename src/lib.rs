@@ -218,8 +218,7 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
             revision,
             target_name,
             target_arch,
-            is_x86_base: target_arch == "x86" || target_arch == "x86_64",
-            is_hexagon: target_arch == "hexagon",
+            arch_family: ArchFamily::new(target_arch),
             obj_path: PathBuf::new(),
             verbose_function_names: vec![],
             out: String::new(),
@@ -296,11 +295,42 @@ struct RevisionContext<'a> {
     revision: &'a Revision,
     target_name: &'a str,
     target_arch: &'a str,
-    is_x86_base: bool,
-    is_hexagon: bool,
+    arch_family: ArchFamily,
     obj_path: PathBuf,
     verbose_function_names: Vec<&'a str>,
     out: String,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum ArchFamily {
+    X86,
+    Hexagon,
+    Arm,
+    Avr,
+    CSky,
+    LoongArch,
+    Msp430,
+    PowerPC,
+    Xtensa,
+    // Architectures that don't need special handling inside loop in handle_asm/write_func.
+    Other,
+}
+
+impl ArchFamily {
+    fn new(target_arch: &str) -> Self {
+        match target_arch {
+            "x86" | "x86_64" => ArchFamily::X86,
+            "hexagon" => ArchFamily::Hexagon,
+            "arm" => ArchFamily::Arm,
+            "avr" => ArchFamily::Avr,
+            "csky" => ArchFamily::CSky,
+            "loongarch32" | "loongarch64" => ArchFamily::LoongArch,
+            "msp430" => ArchFamily::Msp430,
+            "powerpc" | "powerpc64" => ArchFamily::PowerPC,
+            "xtensa" => ArchFamily::Xtensa,
+            _ => ArchFamily::Other,
+        }
+    }
 }
 
 #[track_caller]

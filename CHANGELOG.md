@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix demangling issue on PowerPC64.
+
 ## [0.1.1] - 2025-12-28
 
 - Remove the requirement for the `id` command.

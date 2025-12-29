@@ -1,6 +1,7 @@
 affineinvqb
 asmtest
 demangled
+demangling
 getgid
 getuid
 insn
