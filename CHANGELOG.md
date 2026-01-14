@@ -12,9 +12,15 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix panic when parsing MSP430 assembly.
+
+- Improve demangling of big-endian PowerPC64 assembly.
+
+- Enable [release immutability](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/immutable-releases).
+
 ## [0.1.2] - 2025-12-29
 
-- Fix demangling issue on PowerPC64.
+- Fix demangling issue on PowerPC64 assembly.
 
 ## [0.1.1] - 2025-12-28
 
