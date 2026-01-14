@@ -90,10 +90,10 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
         //
         //         move_!($cc, "1", "{r}"),                    // if cc.Z { r = 1 }
         //         ?
-        if cx.arch_family == ArchFamily::PowerPC {
+        if cx.is_powerpc64be {
             if let Some(name) = function_name.strip_prefix(".text.") {
-                // .text is not demangled by objdump 2.45.
-                function_name = Cow::Owned(format!(".text.{:#}", rustc_demangle::demangle(name)));
+                // .text on big-endian PowerPC64 is not demangled by objdump 2.45.
+                function_name = Cow::Owned(format!("{:#}", rustc_demangle::demangle(name)));
             }
         }
         if cx.arch_family == ArchFamily::Xtensa {

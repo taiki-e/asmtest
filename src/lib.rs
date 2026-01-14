@@ -212,6 +212,14 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
             .unwrap()
             .strip_suffix('"')
             .unwrap();
+        let is_powerpc64be = target_arch == "powerpc64"
+            && cfgs
+                .lines()
+                .find_map(|l| l.strip_prefix("target_endian=\""))
+                .unwrap()
+                .strip_suffix('"')
+                .unwrap()
+                == "big";
         let mut cx = RevisionContext {
             tcx,
             prefer_gnu: false, // TODO: make this an option
@@ -219,6 +227,7 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
             target_name,
             target_arch,
             arch_family: ArchFamily::new(target_arch),
+            is_powerpc64be,
             obj_path: PathBuf::new(),
             verbose_function_names: vec![],
             out: String::new(),
@@ -296,6 +305,7 @@ struct RevisionContext<'a> {
     target_name: &'a str,
     target_arch: &'a str,
     arch_family: ArchFamily,
+    is_powerpc64be: bool,
     obj_path: PathBuf,
     verbose_function_names: Vec<&'a str>,
     out: String,
