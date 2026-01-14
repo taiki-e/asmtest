@@ -4,6 +4,7 @@ demangled
 demangling
 getgid
 getuid
+hexdigit
 insn
 movi
 rmeta

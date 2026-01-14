@@ -31,7 +31,7 @@ pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
     objdump.arg(&cx.obj_path);
     match cx.target_arch {
         "mips" | "mips64" | "mips32r6" | "mips64r6" => {
-            // TODO
+            // TODO(mips)
             objdump.args(["-M", "reg-names=numeric"]);
         }
         "x86" | "x86_64" => {
@@ -75,6 +75,21 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                 }
             }
         }
+        // TODO(hexagon,msp430,etc.): multiple spaces
+        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/hexagon.asm#L2346
+        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/msp430.asm#L2
+        //
+        // TODO(sparc): constant display bug:
+        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/sparcv8_leoncasa.asm#L1463
+        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/sparc64.asm#L564
+        //
+        //         mov               1, %i0	! 1 <asm_test::compare_exchange::u32::seqcst_relaxed+0x1>
+        //         or                %i0, 0x3ff, %i5	! ffff <asm_test::compare_exchange::u16::acqrel_acquire+0xffff>
+        //
+        // The corresponding assembly is:
+        //
+        //         move_!($cc, "1", "{r}"),                    // if cc.Z { r = 1 }
+        //         ?
         if cx.arch_family == ArchFamily::PowerPC {
             if let Some(name) = function_name.strip_prefix(".text.") {
                 // .text is not demangled by objdump 2.45.
@@ -82,7 +97,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
             }
         }
         if cx.arch_family == ArchFamily::Xtensa {
-            // TODO: .literal handling in Xtensa is not yet good:
+            // TODO(xtensa): .literal handling in Xtensa is not yet good:
             //
             //   .literal.asm_test::compare_exchange_weak::u16::seqcst_acquire:
             //           .byte             0xff
@@ -165,7 +180,19 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                         lines.push(Line::Label { num: label_count });
                         label_count += 1;
                     }
-                    let (_raw_insn, mut s) = s.trim_ascii_start().split_once('\t').unwrap(); // TODO: unwrap
+                    let s = s.trim_ascii_start();
+                    let Some((_raw_insn, mut s)) = s.split_once('\t') else {
+                        assert_eq!(cx.target_arch, "msp430");
+                        for n in s.split([' ', '\t']) {
+                            assert!(
+                                n.is_empty()
+                                    || n.len() == 2
+                                        && n.as_bytes().iter().all(u8::is_ascii_hexdigit)
+                            );
+                        }
+                        line_iter.next();
+                        continue;
+                    };
                     if cx.arch_family == ArchFamily::Hexagon {
                         //    8:<\t>e4 5f 00 78<\t>78005fe4   <\t>r4 = #0xff
                         //    8:<\t>e4 5f 00 78<\t>78005fe4 { <\t>r4 = #0xff
