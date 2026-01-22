@@ -38,10 +38,12 @@ x86_64 and AArch64 environments where all of the following commands are availabl
     clippy::exhaustive_structs,
     clippy::impl_trait_in_params,
     // clippy::missing_inline_in_public_items,
-    // clippy::std_instead_of_alloc,
-    // clippy::std_instead_of_core,
+    clippy::std_instead_of_alloc,
+    clippy::std_instead_of_core,
 )]
 #![allow(clippy::missing_panics_doc)]
+
+extern crate alloc;
 
 #[macro_use]
 mod process;

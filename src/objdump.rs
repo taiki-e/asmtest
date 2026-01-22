@@ -4,7 +4,9 @@
 // - https://llvm.org/docs/CommandGuide/llvm-objdump.html
 // - https://sourceware.org/binutils/docs/binutils/objdump.html
 
-use std::{borrow::Cow, cmp, collections::HashMap, sync::LazyLock};
+use alloc::borrow::Cow;
+use core::cmp;
+use std::{collections::HashMap, sync::LazyLock};
 
 use anyhow::Context as _;
 use regex::Regex;
@@ -254,7 +256,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
 }
 
 fn write_func(cx: &mut RevisionContext<'_>, function_name: &str, lines: &[Line<'_>]) {
-    use std::fmt::Write as _;
+    use core::fmt::Write as _;
     let _ = writeln!(cx.out, "{function_name}:");
     let mut instructions = lines.iter();
     while let Some(line) = instructions.next() {
