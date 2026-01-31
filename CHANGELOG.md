@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve demangling of AVR assembly with LLVM 22.
+
 ## [0.1.3] - 2026-01-14
 
 - Fix panic when parsing MSP430 assembly.

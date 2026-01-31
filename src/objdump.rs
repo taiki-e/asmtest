@@ -136,7 +136,9 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                 4,
             ),
             ArchFamily::Avr => (
-                "\\.(\\+|-)[0-9]+ +\t; 0x([0-9a-f]+) <__zero_reg__(\\+0x[0-9a-f]+)?>".to_owned(),
+                format!(
+                    "\\.(\\+|-)[0-9]+ +\t; 0x([0-9a-f]+) <(__zero_reg__|{verbose_function_name})(\\+0x[0-9a-f]+)?>"
+                ),
                 2,
             ),
             ArchFamily::CSky => (
