@@ -21,6 +21,7 @@ x86_64 and AArch64 environments where all of the following commands are availabl
 <!-- tidy:sync-markdown-to-rustdoc:end -->
 */
 
+#![no_std]
 #![doc(test(
     no_crate_inject,
     attr(allow(
@@ -46,6 +47,7 @@ x86_64 and AArch64 environments where all of the following commands are availabl
 #![allow(clippy::missing_panics_doc)]
 
 extern crate alloc;
+extern crate std;
 
 #[macro_use]
 mod process;
@@ -53,8 +55,11 @@ mod process;
 mod cargo;
 mod objdump;
 
+#[cfg(not(windows))]
+use alloc::format;
+use alloc::{borrow::ToOwned as _, string::String, vec, vec::Vec};
 use std::{
-    env, fs,
+    env, eprintln, fs,
     io::{self, IsTerminal as _, Write as _},
     path::{Path, PathBuf},
     process::Stdio,

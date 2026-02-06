@@ -4,7 +4,12 @@
 // - https://llvm.org/docs/CommandGuide/llvm-objdump.html
 // - https://sourceware.org/binutils/docs/binutils/objdump.html
 
-use alloc::borrow::Cow;
+use alloc::{
+    borrow::{Cow, ToOwned as _},
+    format,
+    string::String,
+    vec,
+};
 use core::cmp;
 use std::{collections::HashMap, sync::LazyLock};
 
