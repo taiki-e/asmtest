@@ -26,7 +26,7 @@ doc-scrape-examples = false
 [dependencies]
 anyhow = "1.0.47"
 build-context = "0.1"
-cargo-config2 = "0.1.38"
+cargo-config2 = "0.1.41"
 regex = { version = "1.3", default-features = false, features = ["perf", "std"] }
 rustc-demangle = { version = "0.1.23", features = ["std"] }
 serde = "1.0.165"

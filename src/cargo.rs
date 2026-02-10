@@ -27,10 +27,6 @@ pub(crate) fn metadata(manifest_path: &str) -> Result<Metadata> {
     serde_json::from_str(&cmd.read()?).with_context(|| format!("failed to parse output from {cmd}"))
 }
 
-pub(crate) fn print_cfg(target: &str) -> Result<String> {
-    cmd!(RUSTC, "--print", "cfg", "--target", target).read()
-}
-
 pub(crate) fn config(manifest_dir: &Path) -> Result<Config, cargo_config2::Error> {
     Config::load_with_options(
         manifest_dir,

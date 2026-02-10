@@ -65,7 +65,10 @@ use std::{
     process::Stdio,
 };
 
-use cargo_config2::TargetTripleRef;
+use cargo_config2::{
+    TargetTripleRef,
+    cfg::{TargetArch, TargetEndian},
+};
 
 use self::process::ProcessBuilder;
 
@@ -212,30 +215,17 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
     for revision in revisions {
         eprintln!("testing revision {}", revision.name);
         // Get target info.
-        let cfgs = cargo::print_cfg(&revision.target).unwrap();
-        let target_name = TargetTripleRef::from(&revision.target);
-        let target_name = target_name.triple();
-        let target_arch = cfgs
-            .lines()
-            .find_map(|l| l.strip_prefix("target_arch=\""))
-            .unwrap()
-            .strip_suffix('"')
-            .unwrap();
-        let is_powerpc64be = target_arch == "powerpc64"
-            && cfgs
-                .lines()
-                .find_map(|l| l.strip_prefix("target_endian=\""))
-                .unwrap()
-                .strip_suffix('"')
-                .unwrap()
-                == "big";
+        let target = TargetTripleRef::from(&revision.target);
+        let target_name = target.triple();
+        let target_arch = tcx.config.cfg::<TargetArch, _>(&target).unwrap();
+        let is_powerpc64be = target_arch == TargetArch::powerpc64
+            && tcx.config.cfg::<TargetEndian, _>(&target).unwrap() == TargetEndian::big;
         let mut cx = RevisionContext {
             tcx,
             prefer_gnu: false, // TODO: make this an option
             revision,
             target_name,
-            target_arch,
-            arch_family: ArchFamily::new(target_arch),
+            arch_family: ArchFamily::new(&target_arch),
             is_powerpc64be,
             obj_path: PathBuf::new(),
             verbose_function_names: vec![],
@@ -312,16 +302,15 @@ struct RevisionContext<'a> {
     prefer_gnu: bool, // TODO: move to config
     revision: &'a Revision,
     target_name: &'a str,
-    target_arch: &'a str,
-    arch_family: ArchFamily,
+    arch_family: ArchFamily<'a>,
     is_powerpc64be: bool,
     obj_path: PathBuf,
     verbose_function_names: Vec<&'a str>,
     out: String,
 }
 
-#[derive(Clone, Copy, PartialEq)]
-enum ArchFamily {
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum ArchFamily<'a> {
     X86,
     Hexagon,
     Arm,
@@ -330,24 +319,34 @@ enum ArchFamily {
     LoongArch,
     Msp430,
     PowerPC,
+    Sparc,
+    Mips,
+    M68k,
+    S390x,
     Xtensa,
     // Architectures that don't need special handling inside loop in handle_asm/write_func.
-    Other,
+    Other(&'a TargetArch),
 }
 
-impl ArchFamily {
-    fn new(target_arch: &str) -> Self {
+impl<'a> ArchFamily<'a> {
+    fn new(target_arch: &'a TargetArch) -> Self {
         match target_arch {
-            "x86" | "x86_64" => ArchFamily::X86,
-            "hexagon" => ArchFamily::Hexagon,
-            "arm" => ArchFamily::Arm,
-            "avr" => ArchFamily::Avr,
-            "csky" => ArchFamily::CSky,
-            "loongarch32" | "loongarch64" => ArchFamily::LoongArch,
-            "msp430" => ArchFamily::Msp430,
-            "powerpc" | "powerpc64" => ArchFamily::PowerPC,
-            "xtensa" => ArchFamily::Xtensa,
-            _ => ArchFamily::Other,
+            TargetArch::x86 | TargetArch::x86_64 => ArchFamily::X86,
+            TargetArch::hexagon => ArchFamily::Hexagon,
+            TargetArch::arm => ArchFamily::Arm,
+            TargetArch::avr => ArchFamily::Avr,
+            TargetArch::csky => ArchFamily::CSky,
+            TargetArch::loongarch32 | TargetArch::loongarch64 => ArchFamily::LoongArch,
+            TargetArch::sparc | TargetArch::sparc64 => ArchFamily::Sparc,
+            TargetArch::msp430 => ArchFamily::Msp430,
+            TargetArch::m68k => ArchFamily::M68k,
+            TargetArch::s390x => ArchFamily::S390x,
+            TargetArch::mips | TargetArch::mips64 | TargetArch::mips32r6 | TargetArch::mips64r6 => {
+                ArchFamily::Mips
+            }
+            TargetArch::powerpc | TargetArch::powerpc64 => ArchFamily::PowerPC,
+            TargetArch::xtensa => ArchFamily::Xtensa,
+            _ => ArchFamily::Other(target_arch),
         }
     }
 }

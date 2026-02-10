@@ -19,14 +19,20 @@ use regex::Regex;
 use crate::{ArchFamily, RevisionContext};
 
 pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
-    match cx.target_arch {
+    match cx.arch_family {
         // Always use GNU binutils for them because some instructions are not correctly recognized or dumped
-        "avr" | "csky" | "m68k" | "msp430" | "mips" | "mips64" | "mips32r6" | "mips64r6"
-        | "s390x" | "sparc" | "sparc64" | "xtensa" => {
+        ArchFamily::Avr
+        | ArchFamily::CSky
+        | ArchFamily::M68k
+        | ArchFamily::Msp430
+        | ArchFamily::Mips
+        | ArchFamily::S390x
+        | ArchFamily::Sparc
+        | ArchFamily::Xtensa => {
             cx.prefer_gnu = true;
         }
         // hexagon is not supported in GNU binutils
-        "hexagon" => cx.prefer_gnu = false,
+        ArchFamily::Hexagon => cx.prefer_gnu = false,
         _ => {}
     }
     let mut objdump = cx.tcx.docker_cmd(cx.obj_path.parent().unwrap());
@@ -36,12 +42,12 @@ pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
         "--disassembler-color=off",
     ]);
     objdump.arg(&cx.obj_path);
-    match cx.target_arch {
-        "mips" | "mips64" | "mips32r6" | "mips64r6" => {
+    match cx.arch_family {
+        ArchFamily::Mips => {
             // TODO(mips)
             objdump.args(["-M", "reg-names=numeric"]);
         }
-        "x86" | "x86_64" => {
+        ArchFamily::X86 => {
             if cx.tcx.tester.config.att_syntax || cx.revision.config.att_syntax {
                 objdump.args(["-M", "att"]);
             } else {
@@ -191,7 +197,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                     }
                     let s = s.trim_ascii_start();
                     let Some((_raw_insn, mut s)) = s.split_once('\t') else {
-                        assert_eq!(cx.target_arch, "msp430");
+                        assert_eq!(cx.arch_family, ArchFamily::Msp430);
                         for n in s.split([' ', '\t']) {
                             assert!(
                                 n.is_empty()
