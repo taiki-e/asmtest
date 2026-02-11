@@ -9,6 +9,11 @@ A library for tracking generated assemblies.
 
 See [atomic-maybe-uninit#55](https://github.com/taiki-e/atomic-maybe-uninit/pull/55) for an usage example.
 
+## Exclude generated assemblies from GitHub's language stats
+
+<!-- Note: we cannot write inline gitattributes example due to https://github.com/rust-lang/rust/issues/86914 -->
+By marking generated assemblies directory as `linguist-detectable=false` in `.gitattributes` ([example](https://github.com/taiki-e/atomic-maybe-uninit/blob/bf9b138a5676f31311defc652b9e6d975f44202d/.gitattributes#L5)), you can exclude generated assemblies from GitHub's language stats.
+
 ## Compatibility
 
 All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, LoongArch, Arm64EC, s390x, MIPS, PowerPC, MSP430, AVR, SPARC, Hexagon, M68k, C-SKY, and Xtensa) have been confirmed to work as targets for generating assembly. Pull requests adding support for non-CPU architectures (such as GPU, WASM, BPF, etc.) are welcome.
