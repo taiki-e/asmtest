@@ -297,7 +297,7 @@ impl<'a> TesterContext<'a> {
             volume,
             "--workdir",
             workdir,
-            "ghcr.io/taiki-e/objdump:binutils-2.45.1-llvm-21",
+            "ghcr.io/taiki-e/objdump:binutils-2.46.0-llvm-21",
         )
     }
 }

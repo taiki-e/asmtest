@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update binutils to 2.46.0.
+
 ## [0.1.4] - 2026-01-31
 
 - Improve demangling of AVR assembly with LLVM 22.
