@@ -216,11 +216,31 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                         //                                    ^^^^-- split_once('\t')
                         s = s.trim_ascii_start().split_once(' ').unwrap().1;
                         let (pre, s) = s.split_once('\t').unwrap();
-                        lines.push(Line::Inst {
-                            addr,
-                            name: pre.trim_ascii(),
-                            operands: s.trim_ascii().into(),
-                        });
+                        let pre = pre.trim_ascii();
+                        let s = s.trim_ascii();
+                        if let Some((operands, s)) = s.split_once(';') {
+                            lines.push(Line::Inst {
+                                addr,
+                                name: pre,
+                                operands: operands.trim_ascii_end().into(),
+                            });
+                            let mut s = s.trim_ascii_start();
+                            while let Some((operands, next)) = s.split_once(';') {
+                                lines.push(Line::Inst {
+                                    addr, // TODO
+                                    name: "",
+                                    operands: operands.into(),
+                                });
+                                s = next.trim_ascii_start();
+                            }
+                            lines.push(Line::Inst {
+                                addr, // TODO
+                                name: "",
+                                operands: s.into(),
+                            });
+                        } else {
+                            lines.push(Line::Inst { addr, name: pre, operands: s.into() });
+                        }
                     } else {
                         let (inst, operands) =
                             s.trim_ascii_start().split_once(['\t', ' ']).unwrap_or((s, ""));

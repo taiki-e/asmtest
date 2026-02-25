@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve handling of Hexagon assembly.
+
 ## [0.1.5] - 2026-02-16
 
 - Update binutils to 2.46.0.
