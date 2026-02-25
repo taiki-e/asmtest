@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-02-25
+
 - Fix trailing newlines/spaces in generated assembly.
 
 ## [0.1.6] - 2026-02-25
@@ -48,7 +50,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/taiki-e/asmtest/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/taiki-e/asmtest/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/taiki-e/asmtest/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/taiki-e/asmtest/compare/v0.1.3...v0.1.4
