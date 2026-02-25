@@ -229,7 +229,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                                 lines.push(Line::Inst {
                                     addr, // TODO
                                     name: "",
-                                    operands: operands.into(),
+                                    operands: operands.trim_ascii_end().into(),
                                 });
                                 s = next.trim_ascii_start();
                             }
@@ -285,6 +285,9 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
         }) {
             cx.out = new;
         }
+    }
+    while cx.out.ends_with("\n\n") {
+        cx.out.pop();
     }
 }
 

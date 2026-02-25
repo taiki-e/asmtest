@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix trailing newlines/spaces in generated assembly.
+
 ## [0.1.6] - 2026-02-25
 
 - Improve handling of Hexagon assembly.
