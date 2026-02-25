@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-02-25
+
 - Improve handling of Hexagon assembly.
 
 ## [0.1.5] - 2026-02-16
@@ -44,7 +46,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/taiki-e/asmtest/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/taiki-e/asmtest/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/taiki-e/asmtest/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/taiki-e/asmtest/compare/v0.1.2...v0.1.3
