@@ -104,7 +104,8 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
         //         move_!($cc, "1", "{r}"),                    // if cc.Z { r = 1 }
         //         ?
         if cx.is_powerpc64be {
-            if let Some(name) = function_name.strip_prefix(".text.") {
+            if let Some(mut name) = function_name.strip_prefix(".text.") {
+                name = name.strip_prefix("unlikely.").unwrap_or(name);
                 // .text on big-endian PowerPC64 is not demangled by objdump 2.45.
                 function_name = Cow::Owned(format!("{:#}", rustc_demangle::demangle(name)));
             }

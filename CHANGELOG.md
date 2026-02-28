@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve demangling of big-endian PowerPC64 assembly.
+
 ## [0.1.7] - 2026-02-25
 
 - Fix trailing newlines/spaces in generated assembly.
