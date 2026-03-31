@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve security of `docker run`.
+
 ## [0.1.8] - 2026-02-28
 
 - Improve demangling of big-endian PowerPC64 assembly.

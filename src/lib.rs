@@ -60,11 +60,15 @@ mod process;
 mod cargo;
 mod objdump;
 
+#[cfg(windows)]
+use alloc::borrow::ToOwned as _;
 #[cfg(not(windows))]
 use alloc::format;
-use alloc::{borrow::ToOwned as _, string::String, vec, vec::Vec};
+use alloc::{string::String, vec, vec::Vec};
 use std::{
-    env, eprintln, fs,
+    env, eprintln,
+    ffi::OsString,
+    fs,
     io::{self, IsTerminal as _, Write as _},
     path::{Path, PathBuf},
     process::Stdio,
@@ -282,9 +286,21 @@ impl<'a> TesterContext<'a> {
     }
 
     fn docker_cmd(&self, workdir: &Path) -> ProcessBuilder {
-        let mut volume = workdir.as_os_str().to_owned();
-        volume.push(":");
-        volume.push(workdir);
+        const IMAGE: &str = "ghcr.io/taiki-e/objdump:binutils-2.46.0-llvm-21";
+        let mount = {
+            const PRE: &str = "type=bind,source=";
+            const MID: &str = ",target=";
+            const POST: &str = ",readonly";
+            let mut m = OsString::with_capacity(
+                workdir.as_os_str().len() * 2 + PRE.len() + MID.len() + POST.len(),
+            );
+            m.push(PRE);
+            m.push(workdir);
+            m.push(MID);
+            m.push(workdir);
+            m.push(POST);
+            m
+        };
         cmd!(
             "docker",
             "run",
@@ -293,11 +309,15 @@ impl<'a> TesterContext<'a> {
             "-i",
             "--user",
             &self.user,
-            "--volume",
-            volume,
+            "--mount",
+            mount,
             "--workdir",
             workdir,
-            "ghcr.io/taiki-e/objdump:binutils-2.46.0-llvm-21",
+            // Refs: https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
+            "--cap-drop=all",
+            "--security-opt=no-new-privileges",
+            "--read-only",
+            IMAGE,
         )
     }
 }
