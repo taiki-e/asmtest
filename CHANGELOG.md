@@ -14,6 +14,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Improve security of `docker run`.
 
+- Update LLVM to 22.
+
 ## [0.1.8] - 2026-02-28
 
 - Improve demangling of big-endian PowerPC64 assembly.

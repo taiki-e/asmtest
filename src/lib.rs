@@ -286,7 +286,7 @@ impl<'a> TesterContext<'a> {
     }
 
     fn docker_cmd(&self, workdir: &Path) -> ProcessBuilder {
-        const IMAGE: &str = "ghcr.io/taiki-e/objdump:binutils-2.46.0-llvm-21";
+        const IMAGE: &str = "ghcr.io/taiki-e/objdump:binutils-2.46.0-llvm-22";
         let mount = {
             const PRE: &str = "type=bind,source=";
             const MID: &str = ",target=";
