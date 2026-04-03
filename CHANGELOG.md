@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve security of `docker run`.
+
 ## [0.1.9] - 2026-03-31
 
 - Improve security of `docker run`.
