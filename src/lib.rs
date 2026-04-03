@@ -313,6 +313,7 @@ impl<'a> TesterContext<'a> {
             mount,
             "--workdir",
             workdir,
+            "--network=none",
             // Refs: https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
             "--cap-drop=all",
             "--security-opt=no-new-privileges",
