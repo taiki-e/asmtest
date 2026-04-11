@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve demangling of Arm64EC assembly.
+
 ## [0.1.10] - 2026-04-03
 
 - Improve security of `docker run`.

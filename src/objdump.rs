@@ -71,11 +71,12 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
         let mut label_count = 0;
         label_map.clear();
         lines.clear();
-        let (verbose_function_name, s) =
+        let (raw_verbose_function_name, s) =
             s.split_once(">:\n").with_context(|| s.to_owned()).unwrap();
-        let mut function_name = Cow::Borrowed(verbose_function_name);
+        let mut function_name = Cow::Borrowed(raw_verbose_function_name);
+        let verbose_function_name = regex::escape(raw_verbose_function_name);
         if !cx.prefer_gnu {
-            if let Some((name, hash)) = verbose_function_name.rsplit_once("::") {
+            if let Some((name, hash)) = raw_verbose_function_name.rsplit_once("::") {
                 // <path::to::fn::h[0-9a-f]{16}>:
                 if hash.len() == 17
                     && hash.as_bytes()[0] == b'h'
@@ -83,7 +84,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                         .iter()
                         .all(|&b| b.is_ascii_digit() | matches!(b, b'a'..=b'f'))
                 {
-                    cx.verbose_function_names.push(verbose_function_name);
+                    cx.verbose_function_names.push(verbose_function_name.clone());
                     function_name = Cow::Borrowed(name);
                 }
             }
@@ -274,7 +275,7 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
     }
     if !cx.verbose_function_names.is_empty() {
         let mut re = String::new();
-        for &verbose_function_name in &cx.verbose_function_names {
+        for verbose_function_name in &cx.verbose_function_names {
             if !re.is_empty() {
                 re.push('|');
             }

@@ -333,7 +333,7 @@ struct RevisionContext<'a> {
     arch_family: ArchFamily<'a>,
     is_powerpc64be: bool,
     obj_path: PathBuf,
-    verbose_function_names: Vec<&'a str>,
+    verbose_function_names: Vec<String>,
     out: String,
 }
 
