@@ -287,7 +287,7 @@ impl<'a> TesterContext<'a> {
         Self { tester, manifest_path, config, nightly: rustc_version.nightly, metadata, user }
     }
 
-    fn docker_cmd(&self, workdir: &Path) -> ProcessBuilder {
+    fn docker_cmd(&self, workdir: &Path, stdin: Option<Stdio>) -> ProcessBuilder {
         const IMAGE: &str = "ghcr.io/taiki-e/objdump@sha256:07e9b142237da061832dc6954fd51c86f2fa6916c5711f09d6b1d5edea408312"; // binutils-2.46.0-llvm-22
         let mount = {
             const PRE: &str = "type=bind,source=";
@@ -303,12 +303,11 @@ impl<'a> TesterContext<'a> {
             m.push(POST);
             m
         };
-        cmd!(
+        let mut cmd = cmd!(
             "docker",
             "run",
             "--rm",
             "--init",
-            "-i",
             "--user",
             &self.user,
             "--mount",
@@ -320,8 +319,13 @@ impl<'a> TesterContext<'a> {
             "--cap-drop=all",
             "--security-opt=no-new-privileges",
             "--read-only",
-            IMAGE,
-        )
+        );
+        if let Some(stdin) = stdin {
+            cmd.arg("-i");
+            cmd.stdin(stdin);
+        }
+        cmd.arg(IMAGE);
+        cmd
     }
 }
 
@@ -396,7 +400,7 @@ fn assert_diff(tcx: &TesterContext<'_>, expected_path: impl AsRef<Path>, actual:
                 &[]
             };
             let mut child = tcx
-                .docker_cmd(&env::current_dir().unwrap())
+                .docker_cmd(&env::current_dir().unwrap(), Some(Stdio::piped()))
                 .into_std()
                 .arg("git")
                 .arg("--no-pager")
@@ -404,7 +408,6 @@ fn assert_diff(tcx: &TesterContext<'_>, expected_path: impl AsRef<Path>, actual:
                 .args(["diff", "--no-index", "--"])
                 .arg(expected_path)
                 .arg("-")
-                .stdin(Stdio::piped())
                 .spawn()
                 .unwrap();
             child.stdin.as_mut().unwrap().write_all(actual).unwrap();

@@ -35,7 +35,7 @@ pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
         ArchFamily::Hexagon => cx.prefer_gnu = false,
         _ => {}
     }
-    let mut objdump = cx.tcx.docker_cmd(cx.obj_path.parent().unwrap());
+    let mut objdump = cx.tcx.docker_cmd(cx.obj_path.parent().unwrap(), None);
     objdump.args([
         if cx.prefer_gnu { "objdump" } else { "llvm-objdump" },
         "-Cd",

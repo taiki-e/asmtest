@@ -7,7 +7,7 @@ use alloc::{
 use core::{fmt, str};
 use std::{
     ffi::OsStr,
-    process::{Command, ExitStatus, Output},
+    process::{Command, ExitStatus, Output, Stdio},
 };
 
 use anyhow::{Context as _, Error, Result};
@@ -52,6 +52,11 @@ impl ProcessBuilder {
     /// Set a variable in the process's environment.
     pub(crate) fn env(&mut self, key: impl AsRef<OsStr>, val: impl AsRef<OsStr>) -> &mut Self {
         self.cmd.env(key.as_ref(), val.as_ref());
+        self
+    }
+
+    pub(crate) fn stdin(&mut self, cfg: Stdio) -> &mut Self {
+        self.cmd.stdin(cfg);
         self
     }
 
