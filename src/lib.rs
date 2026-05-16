@@ -21,7 +21,7 @@ All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, Loon
 x86_64 and AArch64 environments where all of the following commands are available are currently supported as host environments:
 
 - `cargo`
-- `docker`
+- `docker` or `podman` (or compatible CLI specified by `ASMTEST_DOCKER_PATH`. when both available and `ASMTEST_DOCKER_PATH` is not set, docker is preferred)
 
 The exact content of the assembly output depends on both the version of the compiler and the version of this library. You may want to pin these versions to ensure that CI does not break when new versions are released.
 
@@ -265,7 +265,8 @@ struct TesterContext<'a> {
     nightly: bool,
     metadata: cargo::Metadata,
     // For docker
-    user: String,
+    docker: PathBuf,
+    user: Option<String>,
 }
 
 impl<'a> TesterContext<'a> {
@@ -277,16 +278,54 @@ impl<'a> TesterContext<'a> {
         let rustc_version = config.rustc_version().unwrap();
 
         // For docker
-        #[cfg(not(windows))]
-        let user = {
-            format!("{}:{}", rustix::process::getuid().as_raw(), rustix::process::getgid().as_raw())
+        let docker = env::var_os("ASMTEST_DOCKER_PATH").filter(|v| !v.is_empty());
+        let docker_path_specified = docker.is_some();
+        let mut docker = docker.unwrap_or_else(|| OsString::from("docker"));
+        let mut docker_version = cmd!(&docker, "--version").read();
+        if docker_version.is_err() && !docker_path_specified {
+            docker = OsString::from("podman");
+            docker_version = cmd!(&docker, "--version").read();
+        }
+        let rootless =
+            if docker_version.expect("asmtest requires docker or podman").contains("podman") {
+                cmd!(&docker, "info").read().unwrap().contains("rootless: true")
+            } else {
+                cmd!(&docker, "info", "-f", "{{println .SecurityOptions}}")
+                    .read()
+                    .unwrap()
+                    .contains("rootless")
+            };
+        let user = if rootless {
+            None
+        } else {
+            #[cfg(not(windows))]
+            let user = {
+                format!(
+                    "{}:{}",
+                    rustix::process::getuid().as_raw(),
+                    rustix::process::getgid().as_raw()
+                )
+            };
+            #[cfg(windows)]
+            let user = "1000:1000".to_owned();
+            Some(user)
         };
-        #[cfg(windows)]
-        let user = "1000:1000".to_owned();
 
-        Self { tester, manifest_path, config, nightly: rustc_version.nightly, metadata, user }
+        Self {
+            tester,
+            manifest_path,
+            config,
+            nightly: rustc_version.nightly,
+            metadata,
+            docker: docker.into(),
+            user,
+        }
     }
 
+    // Refs:
+    // - https://docs.docker.com/reference/cli/docker/container/run/
+    // - https://docs.podman.io/en/latest/markdown/podman-run.1.html
+    // - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
     fn docker_cmd(&self, workdir: &Path, stdin: Option<Stdio>) -> ProcessBuilder {
         const IMAGE: &str = "ghcr.io/taiki-e/objdump@sha256:07e9b142237da061832dc6954fd51c86f2fa6916c5711f09d6b1d5edea408312"; // binutils-2.46.0-llvm-22
         let mount = {
@@ -304,18 +343,15 @@ impl<'a> TesterContext<'a> {
             m
         };
         let mut cmd = cmd!(
-            "docker",
+            &self.docker,
             "run",
             "--rm",
             "--init",
-            "--user",
-            &self.user,
             "--mount",
             mount,
             "--workdir",
             workdir,
             "--network=none",
-            // Refs: https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
             "--cap-drop=all",
             "--security-opt=no-new-privileges",
             "--read-only",
@@ -323,6 +359,10 @@ impl<'a> TesterContext<'a> {
         if let Some(stdin) = stdin {
             cmd.arg("-i");
             cmd.stdin(stdin);
+        }
+        if let Some(user) = &self.user {
+            cmd.arg("--user");
+            cmd.arg(user);
         }
         cmd.arg(IMAGE);
         cmd

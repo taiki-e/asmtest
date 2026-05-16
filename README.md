@@ -24,7 +24,7 @@ All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, Loon
 x86_64 and AArch64 environments where all of the following commands are available are currently supported as host environments:
 
 - `cargo`
-- `docker`
+- `docker` or `podman` (or compatible CLI specified by `ASMTEST_DOCKER_PATH`. when both available and `ASMTEST_DOCKER_PATH` is not set, docker is preferred)
 
 The exact content of the assembly output depends on both the version of the compiler and the version of this library. You may want to pin these versions to ensure that CI does not break when new versions are released.
 

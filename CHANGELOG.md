@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support `podman` and rootless `docker`.
+
 ## [0.1.11] - 2026-04-11
 
 - Improve demangling of Arm64EC assembly.
