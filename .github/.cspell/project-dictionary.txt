@@ -2,6 +2,7 @@ affineinvqb
 asmtest
 demangled
 demangling
+fsmonitor
 getgid
 getuid
 hexdigit

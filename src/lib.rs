@@ -403,7 +403,7 @@ fn assert_diff(tcx: &TesterContext<'_>, expected_path: impl AsRef<Path>, actual:
                 .docker_cmd(&env::current_dir().unwrap(), Some(Stdio::piped()))
                 .into_std()
                 .arg("git")
-                .arg("--no-pager")
+                .args(["-c", "core.fsmonitor=false", "--no-pager"])
                 .args(color)
                 .args(["diff", "--no-index", "--"])
                 .arg(expected_path)
