@@ -62,7 +62,7 @@ pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
 }
 
 pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
-    static FUNC_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\n00000000+ <").unwrap());
+    static FUNC_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\n[0-9]{8}[0-9]* <").unwrap());
     let mut label_map = HashMap::new();
     let mut lines = vec![];
     let mut func_iter = FUNC_RE.split(s);

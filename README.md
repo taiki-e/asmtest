@@ -19,7 +19,7 @@ By marking generated assemblies directory as `linguist-detectable=false` in `.gi
 
 ## Compatibility
 
-All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, LoongArch, Arm64EC, s390x, MIPS, PowerPC, MSP430, AVR, SPARC, Hexagon, M68k, C-SKY, and Xtensa) have been confirmed to work as targets for generating assembly. Pull requests adding support for other architectures (such as GPU, WASM, BPF, etc.) are welcome.
+All CPU architectures supported by Rust (x86, x86_64, Arm, AArch64, RISC-V, LoongArch, Arm64EC, s390x, MIPS, PowerPC, MSP430, AVR, SPARC, Hexagon, M68k, C-SKY, and Xtensa) and WASM have been confirmed to work as targets for generating assembly. Pull requests adding support for other architectures (such as GPU, BPF, etc.) are welcome.
 
 x86_64 and AArch64 environments where all of the following commands are available are currently supported as host environments:
 

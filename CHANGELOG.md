@@ -12,6 +12,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support WASM assembly.
+
+- Improve handling of RISC-V and LoongArch assembly.
+
 ## [0.1.12] - 2026-05-16
 
 - Support `podman` and rootless `docker`.
