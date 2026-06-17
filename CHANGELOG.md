@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-06-17
+
 - Support WASM assembly.
 
 - Improve handling of RISC-V and LoongArch assembly.
@@ -76,7 +78,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.12...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.13...HEAD
+[0.1.13]: https://github.com/taiki-e/asmtest/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/taiki-e/asmtest/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/taiki-e/asmtest/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/taiki-e/asmtest/compare/v0.1.9...v0.1.10
