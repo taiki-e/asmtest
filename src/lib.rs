@@ -227,7 +227,6 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
         eprintln!("testing revision {}", revision.name);
         // Get target info.
         let target = TargetTripleRef::from(&revision.target);
-        let target_name = target.triple();
         let target_arch = tcx.config.cfg::<TargetArch, _>(&target).unwrap();
         let is_powerpc64be = target_arch == TargetArch::powerpc64
             && tcx.config.cfg::<TargetEndian, _>(&target).unwrap() == TargetEndian::big;
@@ -235,7 +234,6 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
             tcx,
             prefer_gnu: false, // TODO: make this an option
             revision,
-            target_name,
             arch_family: ArchFamily::new(&target_arch),
             is_powerpc64be,
             obj_path: PathBuf::new(),
@@ -373,7 +371,6 @@ struct RevisionContext<'a> {
     tcx: &'a TesterContext<'a>,
     prefer_gnu: bool, // TODO: move to config
     revision: &'a Revision,
-    target_name: &'a str,
     arch_family: ArchFamily<'a>,
     is_powerpc64be: bool,
     obj_path: PathBuf,

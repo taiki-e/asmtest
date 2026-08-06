@@ -84,8 +84,8 @@ pub(crate) fn build(
         cargo.args(&args).args(&rest_args).env("CARGO_ENCODED_RUSTFLAGS", rustflags).run().unwrap();
         unreachable!()
     };
-    let mut hash = None;
-    'hash: for line in json.lines() {
+    let mut obj_path = None;
+    'obj_path: for line in json.lines() {
         if line.trim_ascii_start().is_empty() {
             continue;
         }
@@ -96,53 +96,61 @@ pub(crate) fn build(
         if artifact.manifest_path != cx.tcx.manifest_path {
             continue;
         }
-        for filename in &artifact.filenames {
-            if let Some(f) = filename.strip_suffix(".rmeta") {
-                if let Some((_, h)) = f.rsplit_once('-') {
-                    hash = Some((h.to_owned(), artifact));
-                    break 'hash;
-                }
-            }
+        if let Some(path) = artifact.obj_path() {
+            obj_path = Some(path);
+            break 'obj_path;
         }
     }
-    let Some((hash, artifact)) = hash else {
+    let Some(obj_path) = obj_path else {
         panic!("not found .rmeta file in artifacts for {}", cx.tcx.manifest_path);
     };
-    // TODO: search both?
-    cx.obj_path = cx
-        .tcx
-        .metadata
-        .build_directory
-        .as_ref()
-        .unwrap_or(&cx.tcx.metadata.target_directory)
-        .canonicalize()
-        .expect("failed to canonicalize target directory")
-        .join(cx.target_name)
-        .join("release/deps")
-        .join(format!(
-            "{}-{hash}.o",
-            Path::new(&artifact.package_id)
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .split_once('#')
-                .context(artifact.package_id.clone())
-                .unwrap()
-                .0
-                .replace('-', "_")
-        ));
+    cx.obj_path = obj_path.canonicalize().expect("failed to canonicalize object file");
 }
 
 #[derive(Deserialize)]
 pub(crate) struct Metadata {
     pub(crate) target_directory: PathBuf,
-    pub(crate) build_directory: Option<PathBuf>,
 }
 
 #[derive(Deserialize)]
 struct Artifact {
-    package_id: String,
     manifest_path: String,
     filenames: Vec<String>,
+}
+
+impl Artifact {
+    fn obj_path(&self) -> Option<PathBuf> {
+        self.filenames.iter().find_map(|filename| {
+            let filename = Path::new(filename);
+            let file_name = filename.file_name()?.to_str()?;
+            let stem = file_name.strip_prefix("lib")?.strip_suffix(".rmeta")?;
+            Some(filename.with_file_name(format!("{stem}.o")))
+        })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::{borrow::ToOwned as _, string::String, vec};
+    use std::path::Path;
+
+    use super::Artifact;
+
+    #[test]
+    fn artifact_obj_path() {
+        for (rmeta, obj) in [
+            (
+                "target/aarch64-unknown-linux-gnu/release/deps/libasm_test-0123456789abcdef.rmeta",
+                "target/aarch64-unknown-linux-gnu/release/deps/asm_test-0123456789abcdef.o",
+            ),
+            (
+                "target/aarch64-unknown-linux-gnu/release/build/asm-test/0123456789abcdef/out/libasm_test-0123456789abcdef.rmeta",
+                "target/aarch64-unknown-linux-gnu/release/build/asm-test/0123456789abcdef/out/asm_test-0123456789abcdef.o",
+            ),
+        ] {
+            let artifact =
+                Artifact { manifest_path: String::new(), filenames: vec![rmeta.to_owned()] };
+            assert_eq!(artifact.obj_path().unwrap(), Path::new(obj));
+        }
+    }
 }

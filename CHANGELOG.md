@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix compatibility with Cargo's new build-dir layout.
+
 ## [0.1.13] - 2026-06-17
 
 - Support WASM assembly.
