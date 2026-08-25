@@ -267,7 +267,11 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                 if let Some(num) = label_map[&addr] {
                     if *inst_addr > addr { format!("{num}b") } else { format!("{num}f") }
                 } else {
-                    c.get(0).unwrap().as_str().to_owned()
+                    normalize_function_reference(
+                        c.get(0).unwrap().as_str(),
+                        raw_verbose_function_name,
+                        &function_name,
+                    )
                 }
             });
         }
@@ -290,6 +294,18 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
     }
     while cx.out.ends_with("\n\n") {
         cx.out.pop();
+    }
+}
+
+fn normalize_function_reference(
+    reference: &str,
+    raw_function_name: &str,
+    function_name: &str,
+) -> String {
+    if raw_function_name == function_name {
+        reference.to_owned()
+    } else {
+        reference.replace(raw_function_name, function_name)
     }
 }
 

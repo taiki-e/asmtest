@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve demangling of Xtensa assembly.
+
 ## [0.1.14] - 2026-08-07
 
 - Fix compatibility with Cargo's new build-dir layout.
