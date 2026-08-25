@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-08-25
+
 - Improve demangling of Xtensa assembly.
 
 ## [0.1.14] - 2026-08-07
@@ -84,7 +86,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/taiki-e/asmtest/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/taiki-e/asmtest/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/taiki-e/asmtest/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/taiki-e/asmtest/compare/v0.1.11...v0.1.12
