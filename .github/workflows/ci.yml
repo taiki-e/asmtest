@@ -18,11 +18,11 @@ concurrency:
 
 jobs:
   tidy:
-    uses: taiki-e/github-actions/.github/workflows/tidy.yml@112032b8c84f96950c5a8948c5553831b957588c # 2026.10.31
+    uses: taiki-e/github-actions/.github/workflows/tidy.yml@07c8b42e7ad077d40127201ac62770c6eb31893e # 2026.11.1
     permissions:
       security-events: write # for github/codeql-action/*
   test:
     needs: tidy
-    uses: taiki-e/github-actions/.github/workflows/rust-test.yml@112032b8c84f96950c5a8948c5553831b957588c # 2026.10.31
+    uses: taiki-e/github-actions/.github/workflows/rust-test.yml@07c8b42e7ad077d40127201ac62770c6eb31893e # 2026.11.1
     with:
       no-std: false
