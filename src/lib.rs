@@ -325,7 +325,7 @@ impl<'a> TesterContext<'a> {
     // - https://docs.podman.io/en/latest/markdown/podman-run.1.html
     // - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
     fn docker_cmd(&self, workdir: &Path, stdin: Option<Stdio>) -> ProcessBuilder {
-        const IMAGE: &str = "ghcr.io/taiki-e/objdump@sha256:07e9b142237da061832dc6954fd51c86f2fa6916c5711f09d6b1d5edea408312"; // binutils-2.46.0-llvm-22
+        const IMAGE: &str = "ghcr.io/taiki-e/objdump@sha256:f94cb42a3f6bf2ee1b20f6c46f7694d89503d7ad76af61b1b737ea790caaa531"; // binutils-2.47-llvm-23
         let mount = {
             const PRE: &str = "type=bind,source=";
             const MID: &str = ",target=";

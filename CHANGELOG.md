@@ -12,6 +12,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update binutils to 2.47.
+
+- Update LLVM to 23.
+
 ## [0.1.15] - 2026-08-25
 
 - Improve demangling of Xtensa assembly.
