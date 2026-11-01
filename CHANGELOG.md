@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-11-01
+
 - Update binutils to 2.47.
 
 - Update LLVM to 23.
@@ -90,7 +92,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/taiki-e/asmtest/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/taiki-e/asmtest/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/taiki-e/asmtest/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/taiki-e/asmtest/compare/v0.1.12...v0.1.13
