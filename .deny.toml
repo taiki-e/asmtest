@@ -19,7 +19,6 @@ build.include-dependencies = true
 build.include-workspace = false # covered by tools/tidy.sh
 build.include-archives = true
 build.allow-build-scripts = [
-    { name = "anyhow" },
     { name = "build-context" },
     { name = "libc" }, # via rustix
     { name = "proc-macro2" }, # via serde_derive

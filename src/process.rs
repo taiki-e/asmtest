@@ -10,7 +10,7 @@ use std::{
     process::{Command, ExitStatus, Output, Stdio},
 };
 
-use anyhow::{Context as _, Error, Result};
+use crate::error::{Context as _, Error, Result};
 
 macro_rules! cmd {
     ($program:expr $(, $arg:expr)* $(,)?) => {{
@@ -159,5 +159,5 @@ fn process_error(mut msg: String, status: Option<ExitStatus>, output: Option<&Ou
         }
     }
 
-    Error::msg(msg)
+    Error::new(msg)
 }

@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Remove dependency on `anyhow`.
+
 ## [0.1.16] - 2026-11-01
 
 - Update binutils to 2.47.

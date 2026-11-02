@@ -60,6 +60,7 @@ extern crate std;
 mod process;
 
 mod cargo;
+mod error;
 mod objdump;
 
 #[cfg(windows)]

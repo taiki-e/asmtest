@@ -13,10 +13,9 @@ use alloc::{
 use core::cmp;
 use std::{collections::HashMap, sync::LazyLock};
 
-use anyhow::Context as _;
 use regex::Regex;
 
-use crate::{ArchFamily, RevisionContext};
+use crate::{ArchFamily, RevisionContext, error::Context as _};
 
 pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
     match cx.arch_family {

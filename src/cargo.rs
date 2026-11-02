@@ -3,12 +3,14 @@
 use alloc::{borrow::ToOwned as _, format, string::String, vec::Vec};
 use std::path::{Path, PathBuf};
 
-use anyhow::{Context as _, Result};
 use build_context::{CARGO, RUSTC};
 pub(crate) use cargo_config2::Config;
 use serde_derive::Deserialize;
 
-use crate::RevisionContext;
+use crate::{
+    RevisionContext,
+    error::{Context as _, Result},
+};
 
 pub(crate) fn locate_project(manifest_path: &Path) -> Result<String> {
     cmd!(CARGO, "locate-project", "--message-format", "plain", "--manifest-path", manifest_path)
