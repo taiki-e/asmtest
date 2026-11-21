@@ -14,6 +14,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Fix `<unknown>` in Arm assembly when `-C target-feature` is passed.
 
+- Remove extra annotates on constants in SPARC assembly.
+
 ## [0.1.18] - 2026-11-21
 
 - Fix issue in RISC-V assembly generation due to [nightly-2026-11-21 change](https://github.com/rust-lang/rust/pull/164378).

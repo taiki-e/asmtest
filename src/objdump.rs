@@ -96,18 +96,6 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
         // TODO(hexagon,msp430,etc.): multiple spaces
         // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/hexagon.asm#L2346
         // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/msp430.asm#L2
-        //
-        // TODO(sparc): constant display bug:
-        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/sparcv8_leoncasa.asm#L1463
-        // https://github.com/taiki-e/atomic-maybe-uninit/blob/5e1cd2165c45e4362c6638b06b24fc37ea79884a/tests/asm-test/asm/atomic-maybe-uninit/sparc64.asm#L564
-        //
-        //         mov               1, %i0	! 1 <asm_test::compare_exchange::u32::seqcst_relaxed+0x1>
-        //         or                %i0, 0x3ff, %i5	! ffff <asm_test::compare_exchange::u16::acqrel_acquire+0xffff>
-        //
-        // The corresponding assembly is:
-        //
-        //         move_!($cc, "1", "{r}"),                    // if cc.Z { r = 1 }
-        //         ?
         if cx.is_powerpc64be {
             if let Some(mut name) = function_name.strip_prefix(".text.") {
                 name = name.strip_prefix("unlikely.").unwrap_or(name);
@@ -253,7 +241,15 @@ pub(crate) fn handle_asm<'a>(cx: &mut RevisionContext<'a>, s: &'a str) {
                         lines.push(Line::Inst {
                             addr,
                             name: inst.trim_ascii_end(),
-                            operands: operands.trim_ascii().into(),
+                            operands: if cx.arch_family == ArchFamily::Sparc {
+                                operands
+                                    .split_once("\t!")
+                                    .map_or(operands, |(s, _)| s)
+                                    .trim_ascii()
+                                    .into()
+                            } else {
+                                operands.trim_ascii().into()
+                            },
                         });
                     }
                     line_iter.next();
