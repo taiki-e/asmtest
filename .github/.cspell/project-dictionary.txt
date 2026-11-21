@@ -1,5 +1,6 @@
 affineinvqb
 asmtest
+Ctarget
 demangled
 demangling
 fsmonitor
@@ -8,6 +9,7 @@ getuid
 hexdigit
 insn
 libasm
+mattr
 movi
 rmeta
 zmij

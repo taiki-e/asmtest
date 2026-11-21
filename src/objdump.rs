@@ -46,6 +46,11 @@ pub(crate) fn disassemble(cx: &mut RevisionContext<'_>) -> String {
             // TODO(mips)
             objdump.args(["-M", "reg-names=numeric"]);
         }
+        ArchFamily::Arm => {
+            if !cx.prefer_gnu && !cx.target_features.is_empty() {
+                objdump.arg(format!("--mattr={}", cx.target_features.join(",")));
+            }
+        }
         ArchFamily::X86 => {
             if cx.tcx.tester.config.att_syntax || cx.revision.config.att_syntax {
                 objdump.args(["-M", "att"]);

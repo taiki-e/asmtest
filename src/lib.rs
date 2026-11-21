@@ -239,6 +239,7 @@ fn dump(tester: &Tester, manifest_dir: &Path, dump_dir: &Path, revisions: &[Revi
             is_powerpc64be,
             obj_path: PathBuf::new(),
             verbose_function_names: vec![],
+            target_features: vec![],
             out: String::new(),
         };
 
@@ -376,6 +377,7 @@ struct RevisionContext<'a> {
     is_powerpc64be: bool,
     obj_path: PathBuf,
     verbose_function_names: Vec<String>,
+    target_features: Vec<String>,
     out: String,
 }
 

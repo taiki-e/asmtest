@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use alloc::{borrow::ToOwned as _, format, string::String, vec::Vec};
+use alloc::{borrow::ToOwned, format, string::String, vec::Vec};
 use std::path::{Path, PathBuf};
 
 use build_context::{CARGO, RUSTC};
@@ -57,7 +57,6 @@ pub(crate) fn build(
     }
     rustflags.flags.extend_from_slice(&cx.tcx.tester.config.rustc_args);
     rustflags.flags.extend_from_slice(&cx.revision.config.rustc_args);
-    let rustflags = &rustflags.encode().unwrap();
     let mut args = cargo_base_args.to_owned();
     args.push("--target");
     args.push(&cx.revision.target);
@@ -72,6 +71,19 @@ pub(crate) fn build(
             }
         }
     }
+    cx.target_features = rustflags
+        .flags
+        .iter()
+        .map(String::as_str)
+        .chain(rest_args.iter().copied())
+        .filter_map(|arg| {
+            arg.strip_prefix("target-feature=")
+                .or_else(|| arg.strip_prefix("-Ctarget-feature="))
+                .or_else(|| arg.strip_prefix("--codegen=target-feature="))
+        })
+        .map(ToOwned::to_owned)
+        .collect();
+    let rustflags = &rustflags.encode().unwrap();
     let mut cargo = cmd!(CARGO);
     if !cx.tcx.nightly {
         // We set -Z merge-functions=disabled to rustc.
