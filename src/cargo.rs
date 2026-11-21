@@ -8,7 +8,7 @@ pub(crate) use cargo_config2::Config;
 use serde_derive::Deserialize;
 
 use crate::{
-    RevisionContext,
+    ArchFamily, RevisionContext,
     error::{Context as _, Result},
 };
 
@@ -48,6 +48,13 @@ pub(crate) fn build(
     let mut rustflags = cx.tcx.config.rustflags(&cx.revision.target).unwrap().unwrap_or_default();
     rustflags.push("-Z");
     rustflags.push("merge-functions=disabled");
+    if cx.arch_family == ArchFamily::RiscV {
+        // When linker relaxation is enabled local branch targets may be unresolved in object files.
+        // Disable it so objdump can show their actual destinations without linking.
+        // https://github.com/rust-lang/rust/pull/164378
+        rustflags.push("-C");
+        rustflags.push("target-feature=-relax");
+    }
     rustflags.flags.extend_from_slice(&cx.tcx.tester.config.rustc_args);
     rustflags.flags.extend_from_slice(&cx.revision.config.rustc_args);
     let rustflags = &rustflags.encode().unwrap();

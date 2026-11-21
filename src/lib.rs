@@ -389,6 +389,7 @@ enum ArchFamily<'a> {
     LoongArch,
     Msp430,
     PowerPC,
+    RiscV,
     Sparc,
     Mips,
     M68k,
@@ -415,6 +416,7 @@ impl<'a> ArchFamily<'a> {
                 ArchFamily::Mips
             }
             TargetArch::powerpc | TargetArch::powerpc64 => ArchFamily::PowerPC,
+            TargetArch::riscv32 | TargetArch::riscv64 => ArchFamily::RiscV,
             TargetArch::xtensa => ArchFamily::Xtensa,
             _ => ArchFamily::Other(target_arch),
         }
