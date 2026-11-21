@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-11-21
+
 - Fix `<unknown>` in Arm assembly when `-C target-feature` is passed.
 
 - Remove extra annotates on constants in SPARC assembly.
@@ -104,7 +106,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.18...HEAD
+[Unreleased]: https://github.com/taiki-e/asmtest/compare/v0.1.19...HEAD
+[0.1.19]: https://github.com/taiki-e/asmtest/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/taiki-e/asmtest/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/taiki-e/asmtest/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/taiki-e/asmtest/compare/v0.1.15...v0.1.16
